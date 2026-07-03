@@ -1,0 +1,385 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8"> 
+<title>Customer Dashboard - Digital Photo Studio</title> 
+<style> 
+/* --------------------------- 
+   Body & Background --------------------------- */ 
+body{ 
+  margin:0; 
+  font-family:Arial,sans-serif; 
+  min-height:100vh; 
+  display:flex; 
+  flex-direction:column; 
+  align-items:center; 
+  
+background:url('https://i0.wp.com/picjumbo.com/wp-content/uploads/green-natural-background
+with-wooden-surface-free-image.jpeg?w=2210&quality=70') no-repeat center center fixed; 
+  background-size:cover; 
+} 
+ 
+h2{margin:20px;} 
+.panel{ 
+  display:none; 
+  background: rgba(255,255,255,0.9); 
+  padding:20px; 
+  border-radius:10px; 
+  box-shadow:0 8px 20px rgba(0,0,0,0.2); 
+  width:90%; 
+  max-width:1000px; 
+  margin-bottom:20px; 
+} 
+ 
+.navbar {display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;} 
+.navbar button { 
+  padding:10px 15px; 
+  border:none; 
+  border-radius:8px; 
+  background: rgba(0,114,255,0.8); 
+  color:white; 
+  cursor:pointer; 
+} 
+.navbar button:hover {background: rgba(0,91,181,0.9);} 
+.subnav {margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap;} 
+.subnav button { 
+padding:5px 10px; 
+border:none; 
+border-radius:6px; 
+background: rgba(0,198,255,0.8); 
+color:white; 
+cursor:pointer; 
+} 
+.subnav button:hover {background: rgba(0,114,255,0.9);} 
+.card { 
+background: rgba(255,255,255,0.95); 
+border-radius:10px; 
+padding:10px; 
+text-align:center; 
+box-shadow:0 5px 15px rgba(0,0,0,0.15); 
+display:flex; 
+flex-direction:column; 
+align-items:center; 
+gap:5px; 
+width:150px; 
+} 
+.card img {width:120px; height:120px; object-fit:cover; border-radius:6px;} 
+.card button {padding:5px 8px; border:none; border-radius:5px; cursor:pointer; 
+background:#0072ff; color:white;} 
+.card button:hover {background:#005bb5;} 
+#ordersPanel .card {width:200px;} 
+#chatWindow {border:1px solid #ccc; border-radius:8px; height:300px; overflow-y:auto; 
+padding:10px; margin-bottom:10px;} 
+#chatInput {width:100%; height:50px; border-radius:6px; padding:5px;} 
+#sendMsgBtn {margin-top:5px; padding:8px 15px; background:#0072ff; color:white; 
+border:none; border-radius:5px; cursor:pointer;} 
+</style> 
+</head> 
+<body> 
+<h2>Customer Dashboard</h2> 
+<!-- Top Navigation --> 
+<div class="navbar"> 
+<button id="homeBtn">Home</button> 
+<button id="frameBtn">Frame Design</button> 
+<button id="photoBtn">Photo Design</button> 
+<button id="favoritesBtn">My Favorites</button> 
+<button id="ordersBtn">My Orders</button> 
+<button id="supportBtn">Support</button> 
+<button id="profileBtn">Profile</button> 
+</div> 
+<!-- Panels --> 
+<div id="homePanel" class="panel"> 
+<h3>Welcome!</h3> 
+<p>Welcome to Digital Photo Studio! Explore frames and designs from the navigation 
+above.</p> 
+</div> 
+<div id="framesPanel" class="panel"> 
+<h3>Frame Categories</h3> 
+<div class="subnav" id="frameCategories"></div> 
+<div id="framesItems" style="display:flex; flex-wrap:wrap; gap:15px; margin-top:10px;"></div> 
+</div> 
+<div id="photosPanel" class="panel"> 
+<h3>Photo Categories</h3> 
+<div class="subnav" id="photoCategories"></div> 
+<div id="photosItems" style="display:flex; flex-wrap:wrap; gap:15px; margin-top:10px;"></div> 
+</div> 
+<div id="favoritesPanel" class="panel"> 
+<h3>My Favorites</h3> 
+<div id="favoritesItems" style="display:flex; flex-wrap:wrap; gap:15px;"></div> 
+</div> 
+<div id="ordersPanel" class="panel"> 
+<h3>My Orders</h3> 
+<div id="ordersItems" style="display:flex; flex-wrap:wrap; gap:15px;"></div> 
+</div> 
+<div id="supportPanel" class="panel"> 
+<h3>Support</h3> 
+<div id="chatWindow"></div> 
+<textarea id="chatInput" placeholder="Type your message..."></textarea> 
+<button id="sendMsgBtn">Send</button> 
+</div> 
+<div id="profilePanel" class="panel"> 
+  <h3>My Profile</h3> 
+   
+  <!-- Profile Picture --> 
+  <div style="position:relative; width:120px; height:120px; margin:10px 0; cursor:pointer;"> 
+    <img id="profilePic" 
+src="https://www.shutterstock.com/image-vector/add-profile-picture-icon-vector-260nw-2259938
+503.jpg"  
+         style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid 
+#0072ff;"> 
+    <input type="file" id="profilePicInput" accept="image/*" style="display:none;"> 
+  </div> 
+   
+  <input type="text" id="fullName" placeholder="Full Name" style="margin:5px 0; width:80%; 
+padding:5px;"><br> 
+  <input type="email" id="email" placeholder="Email" style="margin:5px 0; width:80%; 
+padding:5px;"><br> 
+  <input type="text" id="phone" placeholder="Phone Number" style="margin:5px 0; width:80%; 
+padding:5px;"><br> 
+   
+  <h4>Order History</h4> 
+  <div id="profileOrders" style="display:flex; flex-wrap:wrap; gap:10px;"></div> 
+   
+  <button id="profileLogoutBtn"  
+          style="margin-top:10px; padding:8px 15px; background:red; color:white; border:none; 
+border-radius:5px; cursor:pointer;">Logout</button> 
+</div> 
+ 
+<script> 
+// --------------------------- 
+// Simulate customer login 
+function customerLogin(name,email,phone){ 
+  localStorage.setItem('customerName',name); 
+  localStorage.setItem('customerEmail',email); 
+  localStorage.setItem('customerPhone',phone); 
+  loadCustomerProfile(); 
+} 
+ 
+// Example: automatically log in user (replace with real login) 
+customerLogin("John Doe","john@example.com","+977-9800000000"); 
+ 
+// --------------------------- 
+// Data simulation (admin added items) 
+let frames = JSON.parse(localStorage.getItem('frames'))||[ 
+{id:1,name:"Golden Frame 
+1",price:100,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI4cBh8O8SWD
+VuZOL6gNEGsVm90eqRQcWCRw&s",category:"Golden"}, 
+{id:2,name:"Silver Frame 
+1",price:80,image:"https://via.placeholder.com/120?text=Silver",category:"Silver"} 
+]; 
+let photos = JSON.parse(localStorage.getItem('photos'))||[ 
+{id:1,name:"Birthday 
+1",price:50,image:"https://via.placeholder.com/120?text=Birthday1",category:"Birthday"}, 
+{id:2,name:"Anniversary 
+1",price:70,image:"https://via.placeholder.com/120?text=Anniversary",category:"Anniversary"} 
+]; 
+let favorites = JSON.parse(localStorage.getItem('favorites'))||[]; 
+let orders = JSON.parse(localStorage.getItem('orders'))||[]; 
+// --------------------------- 
+// Navigation 
+const panels = { 
+homeBtn:'homePanel', 
+frameBtn:'framesPanel', 
+photoBtn:'photosPanel', 
+favoritesBtn:'favoritesPanel', 
+ordersBtn:'ordersPanel', 
+supportBtn:'supportPanel', 
+profileBtn:'profilePanel' 
+}; 
+Object.keys(panels).forEach(id=>{ 
+document.getElementById(id).addEventListener('click',()=>{ 
+document.querySelectorAll('.panel').forEach(p=>p.style.display='none'); 
+document.getElementById(panels[id]).style.display='block'; 
+if(id==='supportBtn') loadSupport(); 
+}); 
+}); 
+// --------------------------- 
+// Logout inside Profile 
+document.getElementById('profileLogoutBtn').addEventListener('click',()=>{ 
+localStorage.clear(); 
+alert("Logged out!"); 
+location.reload(); 
+}); 
+// --------------------------- 
+// Profile Picture Upload 
+const profilePic = document.getElementById('profilePic'); 
+const profileInput = document.getElementById('profilePicInput'); 
+ 
+profilePic.addEventListener('click', ()=> profileInput.click()); 
+profileInput.addEventListener('change', (e)=>{ 
+  const file = e.target.files[0]; 
+  if(file){ 
+    const reader = new FileReader(); 
+    reader.onload = function(event){ 
+      profilePic.src = event.target.result; 
+    } 
+    reader.readAsDataURL(file); 
+  } 
+}); 
+ 
+// --------------------------- 
+// Load customer info into profile 
+function loadCustomerProfile(){ 
+  document.getElementById('fullName').value = localStorage.getItem('customerName')||''; 
+  document.getElementById('email').value = localStorage.getItem('customerEmail')||''; 
+  document.getElementById('phone').value = localStorage.getItem('customerPhone')||''; 
+} 
+ 
+// --------------------------- 
+// Card Creator 
+function createCard(item,type){ 
+  const card=document.createElement('div'); 
+  card.className='card'; 
+  card.innerHTML=`<img src="${item.image}"><strong>${item.name}</strong><br>Price: 
+$${item.price}`; 
+   
+  const favBtn = document.createElement('button'); 
+  favBtn.textContent = favorites.find(f=>f.id===item.id && f.type===type)?"Remove 
+Favorite":"Add to Favorites"; 
+  favBtn.onclick = ()=>{ 
+    const index = favorites.findIndex(f=>f.id===item.id && f.type===type); 
+    if(index>=0){favorites.splice(index,1); favBtn.textContent="Add to Favorites";} 
+    else{favorites.push({...item,type}); favBtn.textContent="Remove Favorite";} 
+    localStorage.setItem('favorites',JSON.stringify(favorites)); 
+    loadFavorites(); 
+  }; 
+  card.appendChild(favBtn); 
+   
+  const orderBtn = document.createElement('button'); 
+  orderBtn.textContent="Place Order"; 
+  orderBtn.onclick = ()=>{ 
+    let qty=prompt("Enter Quantity:",1); if(!qty) return; 
+    let address=prompt("Enter Delivery Address:"); if(!address) return; 
+    let payment=prompt("Payment Method: Cash / Online","Cash"); if(!payment) return; 
+    orders.push({...item,type,quantity:qty,address,payment,status:"Pending"}); 
+    localStorage.setItem('orders',JSON.stringify(orders)); 
+    alert("Order placed for "+item.name); 
+    loadOrders(); 
+    loadProfileOrders(); 
+  }; 
+  card.appendChild(orderBtn); 
+   
+  return card; 
+} 
+ 
+// --------------------------- 
+// Load Frames & Photos 
+function loadFramesPanel(){ 
+  const categories = [...new Set(frames.map(f=>f.category))]; 
+  const catDiv = document.getElementById('frameCategories'); 
+  const container = document.getElementById('framesItems'); 
+  container.innerHTML="";  
+  catDiv.innerHTML=""; 
+  categories.forEach(cat=>{ 
+    const btn=document.createElement('button'); 
+    btn.textContent=cat; 
+    btn.onclick = ()=>{ 
+      container.innerHTML=""; 
+      frames.filter(f=>f.category===cat).forEach(f=>container.appendChild(createCard(f,'frame'))); 
+    }; 
+    catDiv.appendChild(btn); 
+  }); 
+} 
+ 
+function loadPhotosPanel(){ 
+  const categories = [...new Set(photos.map(f=>f.category))]; 
+  const catDiv = document.getElementById('photoCategories'); 
+  const container = document.getElementById('photosItems'); 
+  container.innerHTML=""; 
+  catDiv.innerHTML=""; 
+  categories.forEach(cat=>{ 
+    const btn=document.createElement('button'); 
+    btn.textContent=cat; 
+    btn.onclick = ()=>{ 
+      container.innerHTML=""; 
+      
+photos.filter(f=>f.category===cat).forEach(p=>container.appendChild(createCard(p,'photo'))); 
+    }; 
+    catDiv.appendChild(btn); 
+  }); 
+} 
+ 
+// --------------------------- 
+// Favorites & Orders 
+function loadFavorites(){ 
+  const container=document.getElementById('favoritesItems'); 
+  container.innerHTML=""; 
+  favorites.forEach(f=>container.appendChild(createCard(f,f.type))); 
+} 
+ 
+function loadOrders(){ 
+  const container=document.getElementById('ordersItems'); 
+  container.innerHTML=""; 
+  orders.forEach(o=>{ 
+    const card=document.createElement('div'); 
+    card.className='card'; 
+    card.innerHTML=`<img src="${o.image}"><strong>${o.name}</strong><br>Type: 
+${o.type}<br>Qty: ${o.quantity}<br>Address: ${o.address}<br>Payment: 
+${o.payment}<br>Status: ${o.status}`; 
+    container.appendChild(card); 
+  }); 
+} 
+ 
+// --------------------------- 
+// Profile Orders History 
+function loadProfileOrders(){ 
+  const container=document.getElementById('profileOrders'); 
+  container.innerHTML=""; 
+  orders.forEach(o=>{ 
+    const card=document.createElement('div'); 
+    card.className='card'; 
+    card.innerHTML=`<img src="${o.image}"><strong>${o.name}</strong><br>Type: 
+${o.type}<br>Qty: ${o.quantity}<br>Status: ${o.status}`; 
+    container.appendChild(card); 
+  }); 
+} 
+ 
+// --------------------------- 
+// Support 
+function loadSupport(){ 
+  const chatWindow = document.getElementById('chatWindow'); 
+  chatWindow.innerHTML=""; 
+} 
+document.getElementById('sendMsgBtn').addEventListener('click',()=>{ 
+  const input = document.getElementById('chatInput'); 
+  const msg = input.value.trim(); 
+  if(!msg) return; 
+  const chatWindow = document.getElementById('chatWindow'); 
+   
+  const userMsg = document.createElement('div'); 
+  userMsg.style.textAlign='right'; 
+  userMsg.style.margin='5px'; 
+  userMsg.textContent="You: "+msg; 
+  chatWindow.appendChild(userMsg); 
+   
+  input.value=""; 
+  chatWindow.scrollTop = chatWindow.scrollHeight; 
+   
+  const now = new Date(); 
+  const hour = now.getHours(); 
+  setTimeout(()=>{ 
+    const reply = document.createElement('div'); 
+    reply.style.textAlign='left'; 
+    reply.style.margin='5px'; 
+    if(hour>=10 && hour<17){ 
+      reply.textContent="Admin: Thank you for your message! We'll respond shortly."; 
+    }else{ 
+      reply.textContent="AI: Hello! How can I assist you today?"; 
+    } 
+    chatWindow.appendChild(reply); 
+    chatWindow.scrollTop = chatWindow.scrollHeight; 
+  }, 800); 
+}); 
+ 
+// --------------------------- 
+// Initial Load 
+loadFramesPanel(); 
+loadPhotosPanel(); 
+loadFavorites(); 
+loadOrders(); 
+loadProfileOrders(); 
+loadCustomerProfile(); 
+document.getElementById('homePanel').style.display='block'; 
+</script> 
+</body> 
+</html> 

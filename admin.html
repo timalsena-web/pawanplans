@@ -1,0 +1,254 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8"> 
+<title>Admin Panel - Photo & Frame Studio</title> 
+<style> 
+*{box-sizing:border-box;font-family:Segoe UI, Arial,sans-serif;margin:0;padding:0;} 
+body{ 
+background: 
+url('https://static.vecteezy.com/system/resources/thumbnails/017/188/879/small/geometric-dark
+background-with-gradient-shapes-composition-good-for-posters-design-illustration-vector.jpg') 
+no-repeat center center fixed; 
+background-size: cover; 
+} 
+header{background:#4c2a8c;color:#fff;display:flex;justify-content:space-between;align-items:cen
+ter;padding:0 20px;height:60px;} 
+header h1{font-size:20px;} 
+header .top-menu{display:flex;gap:10px;} 
+header .top-menu button{background:transparent;border:none;color:#fff;padding:10px 
+15px;cursor:pointer;font-size:14px;border-bottom:3px solid transparent;transition:all 0.2s;} 
+header .top-menu button.active{border-bottom:3px solid #00c6d7;} 
+header button.logout{background:#fff;color:#4c2a8c;border-radius:5px;padding:8px 16px;} 
+.main{padding:20px;overflow-y:auto;background:rgba(255,255,255,0.85);border-radius:10px;ma
+rgin:20px;} 
+.main h2{color:#1a1f71;margin-bottom:15px;position:relative;} 
+.search-bar{margin-bottom:15px;} 
+.search-bar input{width:100%;padding:10px;border-radius:8px;border:1px solid 
+#ccc;outline:none;} 
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;
+margin-bottom:20px;} 
+table th,table td{padding:12px;text-align:left;border-bottom:1px solid #ddd;} 
+table th{background:#4c2a8c;color:#fff;} 
+table tr:last-child td{border-bottom:none;} 
+button.action-btn{padding:6px 
+12px;border:none;border-radius:5px;cursor:pointer;color:#fff;margin-right:5px;} 
+button.approve{background:#00c6d7;} 
+button.delete{background:#e74c3c;} 
+button.reset{background:#f39c12;} 
+button.edit{background:#8e44ad;} 
+button.add-product{background:#27ae60;margin-bottom:10px;} 
+.subcat-btn{padding:6px 
+10px;margin:5px;border:none;border-radius:5px;cursor:pointer;color:#fff;background:#4c2a8c;} 
+.subcat-btn.active{background:#00c6d7;} 
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0
+.5);justify-content:center;align-items:center;} 
+.modal-content{background:#fff;padding:20px;border-radius:10px;width:400px;max-height:90%;
+overflow-y:auto;} 
+.modal-content h3{margin-top:0;} 
+.modal-content input,.modal-content select{width:100%;padding:8px;margin:6px 
+0;border-radius:5px;border:1px solid #ccc;} 
+</style> 
+</head> 
+<body> 
+ 
+<header> 
+  <h1>Admin Panel</h1> 
+  <div class="top-menu"> 
+    <button class="active" onclick="showSection('customers',this)">Customers</button> 
+    <button onclick="showSection('orders',this)">Orders</button> 
+    <button onclick="showSection('frames',this)">Frames</button> 
+    <button onclick="showSection('designs',this)">Designs</button> 
+    <button onclick="showSection('records',this)">Records</button> 
+    <button onclick="showCustomerSupport(this)">Customer Support</button> 
+  </div> 
+  <button class="logout" onclick="logout()">Logout</button> 
+</header> 
+ 
+<div class="main"> 
+  <!-- Customers --> 
+  <div id="customers" class="section"> 
+    <h2>Customers</h2> 
+    <div class="search-bar"> 
+      <input type="text" id="searchCustomer" placeholder="Search customers..." 
+onkeyup="filterCustomers()"> 
+    </div> 
+    <table id="customerTable"> 
+      <thead><tr><th>Profile</th><th>Full 
+Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th>
+</tr></thead> 
+      <tbody> 
+        <tr> 
+          <td><img src="https://via.placeholder.com/50" width="50" 
+style="border-radius:50%;"></td> 
+          <td>Pawan 
+Timalsena</td><td>pawan123</td><td>pawan@mail.com</td><td>9800000000</td><td>Pendi
+ng</td> 
+          <td> 
+            <button class="action-btn approve" onclick="approveUser(this)">Approve</button> 
+            <button class="action-btn delete" onclick="deleteUser(this)">Delete</button> 
+            <button class="action-btn reset" onclick="resetPassword(this)">Reset 
+Password</button> 
+          </td> 
+        </tr> 
+      </tbody> 
+    </table> 
+  </div> 
+ 
+  <!-- Orders --> 
+  <div id="orders" class="section" style="display:none;"> 
+    <h2>Orders</h2> 
+    <table id="ordersTable"> 
+      <thead><tr><th>Order 
+ID</th><th>Customer</th><th>Contact</th><th>Location</th><th>Remark</th><th>Delivered</
+th></tr></thead> 
+      <tbody> 
+        <tr> 
+          <td>ORD001</td><td>Pawan 
+Timalsena</td><td>9800000000</td><td>Kathmandu</td><td>Handle with care</td> 
+          <td><button class="action-btn approve" onclick="markDelivered(this)">✔</button></td> 
+        </tr> 
+      </tbody> 
+    </table> 
+  </div> 
+ 
+  <!-- Frames --> 
+  <div id="frames" class="section" style="display:none;"> 
+    <h2>Frames</h2> 
+    <button class="add-product" onclick="openAddProduct('Frame')">+ Add Frame</button> 
+    <div class="search-bar"> 
+      <input type="text" id="searchFrames" placeholder="Search frames..." 
+onkeyup="filterProducts('Frame')"> 
+    </div> 
+    <table id="frameTable"><thead><tr><th>Frame 
+#</th><th>Image</th><th>Name</th><th>Subcategory</th><th>Price</th><th>Discount</th><t
+h>Actions</th></tr></thead><tbody></tbody></table> 
+  </div> 
+ 
+  <!-- Designs --> 
+  <div id="designs" class="section" style="display:none;"> 
+    <h2>Designs / Photos</h2> 
+    <button class="add-product" onclick="openAddProduct('Design')">+ Add Design</button> 
+    <div class="search-bar"> 
+      <input type="text" id="searchDesigns" placeholder="Search designs..." 
+onkeyup="filterProducts('Design')"> 
+    </div> 
+    <table 
+id="designTable"><thead><tr><th>Image</th><th>Name</th><th>Subcategory</th><th>Price</
+th><th>Discount</th><th>Actions</th></tr></thead><tbody></tbody></table> 
+  </div> 
+ 
+  <!-- Records --> 
+  <div id="records" class="section" style="display:none;"> 
+    <h2>Records <button 
+style="float:right;color:#e74c3c;background:transparent;border:none;font-size:20px;cursor:point
+er;" onclick="closeRecords()">✖</button></h2> 
+    <div style="margin-bottom:10px;"> 
+      <button class="subcat-btn" onclick="showRecords('today')">Today</button> 
+      <button class="subcat-btn" onclick="showRecords('yesterday')">Yesterday</button> 
+      <button class="subcat-btn" onclick="showRecords('week')">This Week</button> 
+      <button class="subcat-btn" onclick="showRecords('month')">This Month</button> 
+    </div> 
+    <table id="recordsTable"><thead><tr><th>Date</th><th>Order 
+ID</th><th>Customer</th><th>Profit/Loss</th></tr></thead><tbody></tbody></table> 
+  </div> 
+ 
+  <!-- Customer Support --> 
+  <div id="customerSupport" class="section" style="display:none; display:flex; gap:10px;"> 
+    <div id="customerList" style="width:200px; border:1px solid #ccc; border-radius:10px; 
+padding:10px; overflow-y:auto; height:400px; background:#fff;"></div> 
+    <div style="flex:1; display:flex; flex-direction:column;"> 
+      <div id="chatWindow" style="flex:1; border:1px solid #ccc; padding:10px; overflow-y:auto; 
+border-radius:10px; background:#f9f9f9; margin-bottom:10px;"></div> 
+      <div style="display:flex; gap:5px;"> 
+        <input type="text" id="chatInput" placeholder="Type message..." style="flex:1; 
+padding:10px; border-radius:5px; border:1px solid #ccc;"> 
+        <button onclick="sendMessage()" style="padding:10px 15px; border:none; 
+border-radius:5px; background:#4c2a8c; color:#fff;">Send</button> 
+      </div> 
+    </div> 
+  </div> 
+</div> 
+ 
+<!-- Modal --> 
+<div class="modal" id="productModal"> 
+  <div class="modal-content"> 
+    <h3 id="modalTitle">Add Product</h3> 
+    <label>Name</label><input type="text" id="productName"> 
+    <label>Subcategory</label><select id="productSubcat"></select> 
+    <label>Price</label><input type="number" id="productPrice"> 
+    <label>Discount (%)</label><input type="number" id="productDiscount"> 
+    <label>Image URL</label><input type="text" id="productImage"> 
+    <label id="frameNumberLabel" style="display:none;">Frame Number</label> 
+    <input type="text" id="productFrameNumber" style="display:none;"> 
+    <div style="text-align:right;margin-top:10px;"> 
+      <button onclick="closeModal()">Cancel</button> 
+      <button onclick="saveProduct()">Save</button> 
+    </div> 
+  </div> 
+</div> 
+ 
+<script> 
+// --- Section Switching --- 
+function showSection(sectionId, btn){ 
+  document.querySelectorAll('.section').forEach(s=>s.style.display='none'); 
+  document.getElementById(sectionId).style.display='block'; 
+  document.querySelectorAll('.top-menu button').forEach(b=>b.classList.remove('active')); 
+  if(btn) btn.classList.add('active'); 
+} 
+function logout(){alert('Logged out (demo)');} 
+ 
+// --- Customers --- 
+function approveUser(btn){btn.parentElement.parentElement.cells[5].innerText='Approved';} 
+function deleteUser(btn){btn.parentElement.parentElement.remove();} 
+function resetPassword(btn){alert('Password reset sent to 
+'+btn.parentElement.parentElement.cells[3].innerText);} 
+function filterCustomers(){const 
+val=document.getElementById('searchCustomer').value.toLowerCase();document.querySelecto
+rAll('#customerTable tbody tr').forEach(r=>{const 
+text=Array.from(r.cells).slice(1,4).map(c=>c.innerText.toLowerCase()).join(' '); 
+r.style.display=text.includes(val)?'':'none';});} 
+ 
+// --- Products --- 
+let products={Frame:[],Design:[]}; let editIndex=-1, editType=''; 
+const subcats={Frame:['Golden','Silver'],Design:['Anniversary','New Year','Birthday','Others']}; 
+function openAddProduct(type){editIndex=-1; editType=type; 
+document.getElementById('productModal').style.display='flex'; 
+document.getElementById('modalTitle').innerText='Add '+type; 
+document.getElementById('productName').value=''; 
+document.getElementById('productPrice').value=''; 
+document.getElementById('productDiscount').value= '; 
+document.getElementById('productImage').value='; 
+document.getElementById('productFrameNumber').style.display=type==='Frame'?'block':'none'; 
+document.getElementById('frameNumberLabel').style.display=type==='Frame'?'block':'none'; 
+document.getElementById('productFrameNumber').value='; const 
+sel=document.getElementById('productSubcat'); sel.innerHTML='; 
+subcats[type].forEach(s=>{const opt=document.createElement('option'); opt.value=s; 
+opt.innerText=s; sel.appendChild(opt);});} 
+function closeModal(){document.getElementById('productModal').style.display='none';} 
+function saveProduct(){alert('Product saved! (implement full logic)');} 
+// --- Orders --- 
+function markDelivered(btn){btn.parentElement.innerText='✔';} 
+// --- Records --- 
+function showRecords(period){alert('Show '+period+' records (implement full logic)');} 
+function closeRecords(){document.getElementById('records').style.display='none';} 
+// --- Customer Support --- 
+let chatData={}, currentCustomer='Pawan Timalsena'; 
+function showCustomerSupport(btn){showSection('customerSupport',btn); 
+openCustomerSupport();} 
+function openCustomerSupport(){document.getElementById('chatWindow').innerHTML='; 
+if(!chatData[currentCustomer]) chatData[currentCustomer]=[]; 
+chatData[currentCustomer].forEach(m=>displayMessage(m));} 
+function displayMessage(msg){const chatWindow=document.getElementById('chatWindow'); 
+const div=document.createElement('div'); div.style.margin='5px 0'; div.style.padding='5px 10px'; 
+div.style.borderRadius='5px'; div.style.maxWidth='70%'; 
+if(msg.from==='admin'){div.style.background='#4c2a8c'; div.style.color='#fff'; 
+div.style.marginLeft='auto';} else {div.style.background='#ddd'; div.style.color='#000'; 
+div.style.marginRight='auto';} div.innerText=msg.text; chatWindow.appendChild(div); 
+chatWindow.scrollTop=chatWindow.scrollHeight;} 
+function sendMessage(){const text=document.getElementById('chatInput').value.trim(); if(!text) 
+return; chatData[currentCustomer].push({from:'admin',text}); 
+displayMessage({from:'admin',text}); document.getElementById('chatInput').value= ';} 
+</script> 
+</body> 
+</html> 
